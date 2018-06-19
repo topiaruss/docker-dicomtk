@@ -20,3 +20,5 @@ RUN apk update && \
     apk del g++ make git && \
     rm /var/cache/apk/*
 
+COPY tests/ /tests
+
