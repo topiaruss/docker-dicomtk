@@ -1,15 +1,16 @@
-FROM alpine:latest
+FROM python:3.6
 
-# This is lifted from https://hub.docker.com/r/darthunix/dcmtk/~/dockerfile/
+# based on code for an Alpine build, at https://hub.docker.com/r/darthunix/dcmtk/~/dockerfile/
 
 
 # The recommended build uses cmake, but ignore-deprecation allows us to build
 # using the .configure autoconf path.
 # This should be updated to a cmake build pipeline at some point.
 
-RUN apk update && \
-    apk add --no-cache libstdc++ g++ make git && \
-    git clone https://github.com/DCMTK/dcmtk.git && \
+RUN apt-get update && \
+    apt-get install -y libstdc++ g++ make git
+
+RUN git clone https://github.com/DCMTK/dcmtk.git && \
     cd dcmtk && \
     ./configure --ignore-deprecation && \
     make all && \
@@ -17,8 +18,7 @@ RUN apk update && \
     make distclean && \
     cd .. && \
     rm -r dcmtk && \
-    apk del g++ make git && \
-    rm /var/cache/apk/*
+    rm -rf /var/lib/apt/lists/*
 
 COPY tests/ /tests
 
